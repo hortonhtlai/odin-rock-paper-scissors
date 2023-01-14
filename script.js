@@ -1,47 +1,57 @@
+const keys = document.querySelectorAll('.key');
+keys.forEach((key) => key.addEventListener('click', () => playRound(key.textContent)));
+
+let playerScoreP = 0, computerScoreP = 0;
+update(playerScoreP, computerScoreP);
+
 function getComputerChoice() {
     let val = Math.random() * 3;
     switch (true) {
         case (val <= 1):
             return "rock";
-            break;
 
         case (val <= 2):
             return "paper";
-            break;
 
         default:
             return "scissor"
     }
 }
 
-function playRound(playerSelection, computerSelection) {
-    let playerLower = playerSelection.toLowerCase(), computerLower = computerSelection.toLowerCase();
-    if (playerLower == computerLower) {
+function playRound(playerSelection) {
+    let computerSelection = getComputerChoice();
+    let playerLower = playerSelection.toLowerCase();
+    if (playerLower == computerSelection) {
         console.log("Tie!");
-        return 0;
-    } else if ((playerLower == "rock" && computerLower == "scissor") 
-    || (playerLower == "paper" && computerLower == "rock") 
-    || (playerLower == "scissor" && computerLower == "paper")) {
+    } else if ((playerLower == "rock" && computerSelection == "scissor") 
+    || (playerLower == "paper" && computerSelection == "rock") 
+    || (playerLower == "scissor" && computerSelection == "paper")) {
         console.log("You Win! " + playerSelection + " beats " + computerSelection + ".");
-        return 1;
+        playerScoreP = playerScoreP + 1;
     } else {
         console.log("You Lose! " + computerSelection + " beats " + playerSelection + ".");
-        return -1;
+        computerScoreP = computerScoreP + 1;
     }
+    update(playerScoreP, computerScoreP);
 }
 
-function game() {
-    let score = 0;
-    for (let i = 0; i < 5; i++) {
-        let playerChoice = prompt("Enter rock, paper, or scissor:", "");
-        switch (playRound(playerChoice, getComputerChoice())) {
-            case 1:
-                score = score + 1;
-                break;
-            default:
-        }
-        
+
+function update(playerScore, computerScore) {
+    const scoreboardDiv = document.querySelector('.scoreboard');
+    scoreboardDiv.innerHTML = '';
+    const playerScoreP = document.createElement('p');
+    const computerScoreP = document.createElement('p');
+    playerScoreP.textContent = "Player score is " + playerScore;
+    computerScoreP.textContent = "Computer score is " + computerScore;
+    scoreboardDiv.appendChild(playerScoreP);
+    scoreboardDiv.appendChild(computerScoreP);
+    if (playerScore >= 5) {
+        const winnerStatement = document.createElement('p');
+        winnerStatement.textContent = "The player wins";
+        scoreboardDiv.appendChild(winnerStatement);
+    } else if (computerScore >= 5) {
+            const winnerStatement = document.createElement('p');
+            winnerStatement.textContent = "The computer wins";
+            scoreboardDiv.appendChild(winnerStatement);
     }
-    let winner = (score >= 3)? "you" : "computer";
-    console.log("The winner is " + winner);
 }
